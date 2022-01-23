@@ -641,7 +641,7 @@ updatetitle(Client *c)
 {
 	char *title;
 	const char *name = c->overtitle ? c->overtitle :
-	                   c->title ? c->title : "";
+	                   c->title ? c->title : "surf-"VERSION;
 
 	if (curconfig[ShowIndicators].val.i) {
 		gettogglestats(c);
@@ -657,7 +657,13 @@ updatetitle(Client *c)
 		gtk_window_set_title(GTK_WINDOW(c->win), title);
 		g_free(title);
 	} else {
-		gtk_window_set_title(GTK_WINDOW(c->win), name);
+		if (c->progress != 100) {
+			title = g_strdup_printf("[%i%%] %s", c->progress, name);
+
+			gtk_window_set_title(GTK_WINDOW(c->win), title);
+			g_free(title);
+		} else
+			gtk_window_set_title(GTK_WINDOW(c->win), name);
 	}
 }
 
@@ -2118,7 +2124,7 @@ main(int argc, char *argv[])
 	if (argc > 0)
 		arg.v = argv[0];
 	else
-		arg.v = "about:blank";
+		arg.v = "https://google.com";
 
 	setup();
 	c = newclient(NULL);
