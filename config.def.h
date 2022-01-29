@@ -8,7 +8,7 @@ static char *cookiefile     = "~/.surf/cookies.txt";
 static char *styledir       = "~/repos/env/surf/styles/";
 static char *scriptfiles[]  = {
 	"~/repos/env/surf/scripts/script.js",
-	"~/repos/env/surf/scripts/easy_links.js",
+	"~/repos/env/surf/scripts/link_hints.js",
 };
 
 /* Webkit default features */
