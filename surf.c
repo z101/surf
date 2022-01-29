@@ -354,7 +354,7 @@ setup(void)
 		scriptfiles[i] = buildfile(scriptfiles[i]);
 	}
 
-	if (curc nfig[Ephemeral].val.i)
+	if (curconfig[Ephemeral].val.i)
 		cachedir = NULL;
 	else
 		cachedir   = buildpath(cachedir);
