@@ -1,13 +1,14 @@
 /* modifier 0 means no modifier */
 static int surfuseragent    = 1;  /* Append Surf version to default WebKit user agent */
 static char *fulluseragent  = ""; /* Or override the whole user agent string */
-static char *styledir       = "~/.surf/styles/";
 static char *certdir        = "~/.surf/certificates/";
 static char *cachedir       = "~/.surf/cache/";
 static char *cookiefile     = "~/.surf/cookies.txt";
+
+static char *styledir       = "~/repos/env/surf/styles/";
 static char *scriptfiles[]  = {
-	"~/.surf/script.js",
-	"~/.surf/easy_links.js",
+	"~/repos/env/surf/scripts/script.js",
+	"~/repos/env/surf/scripts/easy_links.js",
 };
 
 /* Webkit default features */
@@ -47,7 +48,7 @@ static Parameter defconfig[ParameterLast] = {
 	[SpellChecking]       =       { { .i = 0 },     },
 	[SpellLanguages]      =       { { .v = ((char *[]){ "en_US", NULL }) }, },
 	[StrictTLS]           =       { { .i = 1 },     },
-	[Style]               =       { { .i = 1 },     },
+	[Style]               =       { { .i = 0 },     },
 	[WebGL]               =       { { .i = 0 },     },
 	[ZoomLevel]           =       { { .f = 1.0 },   },
 };
