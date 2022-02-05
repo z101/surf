@@ -256,6 +256,8 @@ static Parameter *curconfig;
 static int modparams[ParameterLast];
 static int spair[2];
 char *argv0;
+static char *urlhistfile;
+static char *srchistfile;
 
 static ParamName loadtransient[] = {
 	Certificate,
@@ -353,6 +355,10 @@ setup(void)
 	/* dirs and files */
 	cookiefile = buildfile(cookiefile);
 	certdir    = buildpath(certdir);
+
+	urlhistfile = buildfile(URL_HIST_FILE);
+	srchistfile = buildfile(SEARCH_HIST_FILE);
+	
 	for (i = 0; i < LENGTH(scriptfiles); i++) {
 		scriptfiles[i] = buildfile(scriptfiles[i]);
 	}
@@ -596,6 +602,7 @@ loaduri(Client *c, const Arg *a)
 	} else {
 		webkit_web_view_load_uri(c->view, url);
 		updatetitle(c);
+		updatehistory(urlhistfile, url);
 	}
 
 	g_free(url);
@@ -618,9 +625,24 @@ loadsearch(Client *c, const Arg *a)
 	} else {
 		webkit_web_view_load_uri(c->view, url);
 		updatetitle(c);
+		updatehistory(srchistfile, searchstr);
 	}
 
 	g_free(url);
+}
+
+void
+updatehistory(const char *file, const char *data)
+{
+	FILE *f;
+	f = fopen(file, "a+");
+
+	char timestamp[20];
+	time_t now = time(0);
+	strftime(timestamp, 20, "%Y-%m-%d", localtime(&now));
+
+	fprintf(f, "%s %s\n", timestamp, data);
+	fclose(f);
 }
 
 const char *
@@ -1124,6 +1146,8 @@ cleanup(void)
 	g_free(cookiefile);
 	g_free(stylefile);
 	g_free(cachedir);
+	g_free(urlhistfile);
+	g_free(srchistfile);
 	for (int i = 0; i < LENGTH(scriptfiles); i++) {
 		g_free(scriptfiles[i]);
 	}

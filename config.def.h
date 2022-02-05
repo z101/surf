@@ -56,9 +56,9 @@ static Parameter defconfig[ParameterLast] = {
 };
 
 static UriParameters uriparams[] = {
-	{ "(://|\\.)suckless\\.org(/|$)", {
+	/*{ "(://|\\.)suckless\\.org(/|$)", {
 	  [JavaScript] = { { .i = 0 }, 1 },
-	}, },
+	}, },*/
 };
 
 /* default window size: width, height */
@@ -71,13 +71,28 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
 #define PROMPT_SEARCH "Search:"
 #define PROMPT_FIND   "Find:"
 
+#define DMENU_STYLE "-fn 'terminus:lang=ru:pixelsize=14' -nb '#202020' -nf '#bbbbbb' -sb '#202020' -sf '#8ae234'"
+
+#define URL_HIST_FILE 		"~/.surf/history/url.hist"
+#define SEARCH_HIST_FILE	"~/.surf/history/search.hist"
+
 /* SETPROP(readprop, setprop, prompt)*/
 #define SETPROP(r, s, p) { \
         .v = (const char *[]){ "/bin/sh", "-c", \
              "prop=\"$(printf '%b' \"$(xprop -id $1 "r" " \
              "| sed -e 's/^"r"(UTF8_STRING) = \"\\(.*\\)\"/\\1/' " \
              "      -e 's/\\\\\\(.\\)/\\1/g')\" " \
-             "| dmenu -fn 'terminus:lang=ru:pixelsize=14' -nb '#202020' -nf '#bbbbbb' -sb '#202020' -sf '#8ae234' -p '"p"' -w $1)\" " \
+             "| dmenu "DMENU_STYLE" -p '"p"' -w $1)\" " \
+             "&& xprop -id $1 -f "s" 8u -set "s" \"$prop\"", \
+             "surf-setprop", winid, NULL \
+        } \
+}
+
+/* SETHIST(histfile, setprop, prompt)*/
+#define SETHIST(h, s, p) { \
+        .v = (const char *[]){ "/bin/sh", "-c", \
+             "prop=\"$(tac "h" " \
+             "| dmenu "DMENU_STYLE" -l 10 -i -p '"p"' -w $1 | sed -e 's/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] \\(.*\\)/\\1/g')\" " \
              "&& xprop -id $1 -f "s" 8u -set "s" \"$prop\"", \
              "surf-setprop", winid, NULL \
         } \
@@ -137,8 +152,8 @@ static SiteSpecific certs[] = {
  */
 static Key keys[] = {
 	/* modifier              keyval          function    arg */
-	{ MODKEY,                GDK_KEY_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO", PROMPT_GO) },
-	{ MODKEY,                GDK_KEY_s,      spawn,      SETPROP("_SURF_SEARCH", "_SURF_SEARCH", PROMPT_SEARCH) },
+	{ MODKEY,                GDK_KEY_g,      spawn,      SETHIST(URL_HIST_FILE, "_SURF_GO", PROMPT_GO) },
+	{ MODKEY,                GDK_KEY_s,      spawn,      SETHIST(SEARCH_HIST_FILE, "_SURF_SEARCH", PROMPT_SEARCH) },
 	{ MODKEY,                GDK_KEY_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
 	{ MODKEY,                GDK_KEY_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND", PROMPT_FIND) },
 
